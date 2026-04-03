@@ -1,4 +1,13 @@
 # safenames WIP
 C++ CLI for removing spaces from filenames.
 
-This project can be built in Eclipse IDE for C/C++
+To build:
+```bash
+clang++ ./safenames.cpp -o safenames
+```
+
+TODO:  
+
+- add option for pathchk validation
+- better output
+

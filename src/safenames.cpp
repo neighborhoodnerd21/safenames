@@ -8,8 +8,6 @@
 
 #include "CLI11.hpp"
 #include <algorithm>
-// use to move files...
-// #include <filesystem>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
@@ -20,10 +18,11 @@ using namespace std;
 
 bool underscores{false};
 bool periods{false};
-string source = " ";
 
+string source = " ";
 string original = " ";
 string newname = " ";
+
 char alternate = ' ';
 
 const char dash = '-';
@@ -55,7 +54,7 @@ int changeName(string filename, int altValue) {
 	std::ifstream f(original.c_str());
 	if (f.good()) {
 		if (std::rename(filename.c_str(), newname.c_str()) == 0) {
-			cout << "File: " << original << " moved to " << newname << endl;
+			cout << "File: " << original << " was moved to " << newname << endl;
 		} else {
 			cout << "File not found!" << endl;
 			exitCode = -1;
@@ -99,7 +98,9 @@ int main(int argc, char **argv) {
 		} else {
 			changeName(original, '0');
 		}
-	}
+	} else {
+    cout << "Missing source file argument" << endl;
+  }
 
 	return exitCode;
 }
