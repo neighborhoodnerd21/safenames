@@ -1,9 +1,9 @@
 //============================================================================
-// Name        : cli-app.cpp
-// Author      :
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Name        : safenames.cpp
+// Author      : neighborhoodnerd21
+// Version     : 0.0.1
+// Copyright   : Public Domain? 2026
+// Description : Removes spaces from file names
 //============================================================================
 
 #include "CLI11.hpp"
