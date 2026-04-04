@@ -8,6 +8,7 @@
 
 #include "CLI11.hpp"
 #include <algorithm>
+#include <cctype>
 #include <cstddef>
 #include <cstdio>
 #include <fstream>
@@ -17,8 +18,8 @@
 
 using namespace std;
 
-bool underscores{false};
-bool periods{false};
+bool underscore{false};
+bool period{false};
 
 string source;
 string original;
@@ -29,6 +30,14 @@ char alternate;
 const char dash = '-';
 const char dot = '.';
 const char uscore = '_';
+
+bool hasWhitespace(const std::string &s) {
+  for (unsigned char ch : s) {
+    if (std::isspace(ch))
+      return true;
+  }
+  return false;
+}
 
 int changeName(string filename, int altValue) {
 
@@ -46,7 +55,13 @@ int changeName(string filename, int altValue) {
 
   newname = filename;
 
-  replace(newname.begin(), newname.end(), ' ', alternate);
+  if (hasWhitespace(newname)) {
+    replace(newname.begin(), newname.end(), ' ', alternate);
+  } else {
+    cout << "Source does not contain any spaces." << endl;
+    cout << "Filename unchanged." << endl;
+    return 0;
+  }
 
   std::ifstream f(original.c_str());
 
@@ -64,13 +79,12 @@ int changeName(string filename, int altValue) {
 
 int main(int argc, char **argv) {
 
-  CLI::App app;
+  CLI::App app{"Removes spaces from source file name."};
 
   // setup flags
-  CLI::Option *uflagcnt =
-      app.add_flag("--underscore, -u", underscores, "Use dashes as delimiter");
-  CLI::Option *pflagcnt =
-      app.add_flag("--period, -p", periods, "Use periods as delimiter");
+  auto u =
+      app.add_flag("--underscore, -u", underscore, "Use dashes as delimiter");
+  auto p = app.add_flag("--period, -p", period, "Use periods as delimiter");
 
   app.add_option("--source, source", source, "Source file")->required();
 
@@ -79,15 +93,20 @@ int main(int argc, char **argv) {
 
   original = source;
 
-  if (underscores) {
-    if (uflagcnt->count() > 1) {
+  if (u->count() > 0 && p->count() > 0) {
+    cout << "Only one flag may be used at a time!" << endl;
+    return 1;
+  }
+
+  if (underscore) {
+    if (u->count() > 1) {
       cout << "Flag can only be passed once!!!" << endl;
       return 1;
     } else {
       changeName(original, '1');
     }
-  } else if (periods) {
-    if (pflagcnt->count() > 1) {
+  } else if (period) {
+    if (p->count() > 1) {
       cout << "Flag can only be passed once!!!" << endl;
       return 1;
     } else {
