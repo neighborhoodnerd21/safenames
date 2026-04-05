@@ -40,22 +40,18 @@ const char uscore = '_';
 
 //--::[ define messages ]::
 
-const string nospacesMsg = R"(
+const string noSpacesMsg = R"(
 
  Source file name does not contain spaces.
 
  filname left unchanged.
 )";
 
-const string notargetMsg = R"(
+const string flagDupMsg = R"(
 
- You must specify a path for the target file.
+ Only one flag may be used at a time.
 
- Usage:
-
- safenames "target\ file.txt"
-
- safenames -h
+ filename left unchanged.
 )";
 
 //--::[ check filename for spaces ]::
@@ -75,7 +71,7 @@ auto spacesValidation = CLI::Validator(
       if (hasWhitespace(i)) {
         return std::string("");
       } else {
-        return std::string(nospacesMsg);
+        return std::string(noSpacesMsg);
       }
     },
     "HAS_SPACES");
@@ -139,20 +135,20 @@ int main(int argc, char **argv) {
   //--::[ enforce restrictions ]::
 
   if (u->count() > 0 && p->count() > 0) {
-    cout << "Only one flag may be used at a time!" << endl;
+    cout << flagDupMsg << endl;
     return 1;
   }
 
   if (underscore) {
     if (u->count() > 1) {
-      cout << "Flag can only be passed once!!!" << endl;
+      cout << flagDupMsg << endl;
       return EXIT_FAILURE;
     } else {
       changeName(original, '1');
     }
   } else if (period) {
     if (p->count() > 1) {
-      cout << "Flag can only be passed once!!!" << endl;
+      cout << flagDupMsg << endl;
       return EXIT_FAILURE;
     } else {
       changeName(original, '2');
