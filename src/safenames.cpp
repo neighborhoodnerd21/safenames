@@ -1,10 +1,14 @@
-//============================================================================
-// Name        : safenames.cpp
-// Author      : neighborhoodnerd21
-// Version     : 0.0.1
-// Copyright   : Public Domain? 2026
-// Description : Removes spaces from file names
-//============================================================================
+/*  // banner
+============================================================================
+ ** Name ........... safenames
+ ** Version ........ 0.0.1
+ ** Description .... Removes spaces from file names
+ ** Author ......... neighborhoodnerd21
+ ** Copyright ...... 2026
+============================================================================
+*/ // banner
+
+//--::[ HEADERS ]::
 
 #include "CLI11.hpp"
 #include <algorithm>
@@ -16,6 +20,8 @@
 #include <iostream>
 #include <ostream>
 #include <string>
+
+//--::[ GLOBALS ]::
 
 using namespace std;
 
@@ -31,6 +37,8 @@ char alternate;
 const char dash = '-';
 const char dot = '.';
 const char uscore = '_';
+
+//--::[ define messages ]::
 
 const string nospacesMsg = R"(
 
@@ -50,6 +58,8 @@ const string notargetMsg = R"(
  safenames -h
 )";
 
+//--::[ check filename for spaces ]::
+
 bool hasWhitespace(const std::string &s) {
   for (unsigned char ch : s) {
     if (std::isspace(ch))
@@ -57,6 +67,8 @@ bool hasWhitespace(const std::string &s) {
   }
   return false;
 }
+
+//--::[ filename validation ]::
 
 auto spacesValidation = CLI::Validator(
     [](const std::string &i) {
@@ -67,6 +79,8 @@ auto spacesValidation = CLI::Validator(
       }
     },
     "HAS_SPACES");
+
+//--::[ change filename ]::
 
 int changeName(string filename, int altValue) {
 
@@ -100,11 +114,14 @@ int changeName(string filename, int altValue) {
   return EXIT_SUCCESS;
 }
 
+//--:::[ MAIN ]:::
+
 int main(int argc, char **argv) {
 
   CLI::App app{"Removes spaces from source file name."};
 
-  // setup flags
+  //--::[ set flags ]::
+
   auto u =
       app.add_flag("--underscore, -u", underscore, "Use dashes as delimiter");
   auto p = app.add_flag("--period, -p", period, "Use periods as delimiter");
@@ -113,10 +130,13 @@ int main(int argc, char **argv) {
       app.add_option("--source, source", source, "Source file")->required();
   s->check(spacesValidation);
 
-  // parse arguments
+  //--::[ parse arguments ]::
+
   CLI11_PARSE(app, argc, argv);
 
   original = source;
+
+  //--::[ enforce restrictions ]::
 
   if (u->count() > 0 && p->count() > 0) {
     cout << "Only one flag may be used at a time!" << endl;
