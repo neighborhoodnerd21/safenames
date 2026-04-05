@@ -11,6 +11,7 @@
 #include <cctype>
 #include <cstddef>
 #include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <ostream>
@@ -31,6 +32,24 @@ const char dash = '-';
 const char dot = '.';
 const char uscore = '_';
 
+const string nospacesMsg = R"(
+
+ Source file name does not contain spaces.
+
+ filname left unchanged.
+)";
+
+const string notargetMsg = R"(
+
+ You must specify a path for the target file.
+
+ Usage:
+
+ safenames "target\ file.txt"
+
+ safenames -h
+)";
+
 bool hasWhitespace(const std::string &s) {
   for (unsigned char ch : s) {
     if (std::isspace(ch))
@@ -38,6 +57,16 @@ bool hasWhitespace(const std::string &s) {
   }
   return false;
 }
+
+auto spacesValidation = CLI::Validator(
+    [](const std::string &i) {
+      if (hasWhitespace(i)) {
+        return std::string("");
+      } else {
+        return std::string(nospacesMsg);
+      }
+    },
+    "HAS_SPACES");
 
 int changeName(string filename, int altValue) {
 
@@ -55,13 +84,7 @@ int changeName(string filename, int altValue) {
 
   newname = filename;
 
-  if (hasWhitespace(newname)) {
-    replace(newname.begin(), newname.end(), ' ', alternate);
-  } else {
-    cout << "Source does not contain any spaces." << endl;
-    cout << "Filename unchanged." << endl;
-    return 0;
-  }
+  replace(newname.begin(), newname.end(), ' ', alternate);
 
   std::ifstream f(original.c_str());
 
@@ -70,11 +93,11 @@ int changeName(string filename, int altValue) {
       cout << "File: " << original << " was moved to " << newname << endl;
     } else {
       cout << "File not found!" << endl;
-      return -1;
+      return EXIT_FAILURE;
     }
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 int main(int argc, char **argv) {
@@ -86,7 +109,9 @@ int main(int argc, char **argv) {
       app.add_flag("--underscore, -u", underscore, "Use dashes as delimiter");
   auto p = app.add_flag("--period, -p", period, "Use periods as delimiter");
 
-  app.add_option("--source, source", source, "Source file")->required();
+  auto s =
+      app.add_option("--source, source", source, "Source file")->required();
+  s->check(spacesValidation);
 
   // parse arguments
   CLI11_PARSE(app, argc, argv);
@@ -101,14 +126,14 @@ int main(int argc, char **argv) {
   if (underscore) {
     if (u->count() > 1) {
       cout << "Flag can only be passed once!!!" << endl;
-      return 1;
+      return EXIT_FAILURE;
     } else {
       changeName(original, '1');
     }
   } else if (period) {
     if (p->count() > 1) {
       cout << "Flag can only be passed once!!!" << endl;
-      return 1;
+      return EXIT_FAILURE;
     } else {
       changeName(original, '2');
     }
@@ -116,5 +141,5 @@ int main(int argc, char **argv) {
     changeName(original, '0');
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
