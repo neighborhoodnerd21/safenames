@@ -122,11 +122,11 @@ int main(int argc, char **argv) {
 
   //--::[ enforce restrictions ]::
 
-  if (u->count() > 0 && p->count() > 0)
-    || (u->count() > 1 || p->count() > 1) {
-      cout << flagDupMsg << endl;
-      return EXIT_FAILURE;
-    }
+  if ((u->count() > 0 && p->count() > 0) ||
+      (u->count() > 1 || p->count() > 1)) {
+    cout << flagDupMsg << endl;
+    return EXIT_FAILURE;
+  }
 
   if (underscore) {
     changeName(original, '1');
