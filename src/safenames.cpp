@@ -34,23 +34,19 @@ string newname;
 
 char alternate;
 
-const char dash = '-';
-const char dot = '.';
-const char uscore = '_';
+const unsigned char dash = '-';
+const unsigned char dot = '.';
+const unsigned char uscore = '_';
 
 //--::[ define messages ]::
 
 const string noSpacesMsg = R"(
-
  Source file name does not contain spaces.
-
  filname left unchanged.
 )";
 
 const string flagDupMsg = R"(
-
  Only one flag may be used at a time.
-
  filename left unchanged.
 )";
 
