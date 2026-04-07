@@ -1,4 +1,4 @@
-/*  // banner
+/*
 ============================================================================
  ** Name ........... safenames
  ** Version ........ 0.0.1
@@ -6,7 +6,7 @@
  ** Author ......... neighborhoodnerd21
  ** Copyright ...... 2026
 ============================================================================
-*/ // banner
+*/
 
 //--::[ HEADERS ]::
 
@@ -32,6 +32,13 @@ const unsigned char dash = '-', dot = '.', uscore = '_';
 
 //--::[ define messages ]::
 
+const string description = R"(
+ $ safenames
+
+ replaces all whitespace characters in a filename with
+ aternative characters.
+)";
+
 const string noSpacesMsg = R"(
  Source file name does not contain spaces.
  filname left unchanged.
@@ -42,27 +49,21 @@ const string flagDupMsg = R"(
  filename left unchanged.
 )";
 
-//--::[ check filename for spaces ]::
+//--::[ whitespace validation ]::
 
-bool hasWhitespace(const std::string &s) {
-  for (unsigned char ch : s) {
-    if (std::isspace(ch))
-      return true;
-  }
-  return false;
-}
-
-//--::[ filename validation ]::
-
-auto spacesValidation = CLI::Validator(
-    [](const std::string &i) {
-      if (hasWhitespace(i)) {
-        return std::string("");
-      } else {
-        return std::string(noSpacesMsg);
+struct WhiteSpaceValidator : public CLI::Validator {
+  WhiteSpaceValidator() {
+    name_ = "SPACES", func_ = [](const std::string &str) {
+      for (unsigned char ch : str) {
+        if (std::isspace(ch))
+          return std::string();
       }
-    },
-    "HAS_SPACES");
+      return std::string(noSpacesMsg);
+    };
+  }
+};
+
+const static WhiteSpaceValidator hasWhiteSpace;
 
 //--::[ change filename ]::
 
@@ -102,7 +103,9 @@ int changeName(string filename, int altValue) {
 
 int main(int argc, char **argv) {
 
-  CLI::App app{"Removes spaces from source file name."};
+  CLI::App app{description};
+
+  app.get_formatter()->enable_option_type_names(false);
 
   //--::[ set flags ]::
 
@@ -112,7 +115,7 @@ int main(int argc, char **argv) {
 
   auto s =
       app.add_option("--source, source", source, "Source file")->required();
-  s->check(spacesValidation);
+  s->check(hasWhiteSpace);
 
   //--::[ parse command ]::
 
