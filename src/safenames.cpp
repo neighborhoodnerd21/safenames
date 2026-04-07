@@ -21,22 +21,14 @@
 #include <ostream>
 #include <string>
 
-//--::[ GLOBALS ]::
-
 using namespace std;
 
-bool underscore{false};
-bool period{false};
+//--::[ GLOBALS ]::
 
-string source;
-string original;
-string newname;
-
+bool underscore{false}, period{false};
+string source, original, newname;
 char alternate;
-
-const unsigned char dash = '-';
-const unsigned char dot = '.';
-const unsigned char uscore = '_';
+const unsigned char dash = '-', dot = '.', uscore = '_';
 
 //--::[ define messages ]::
 
@@ -122,7 +114,7 @@ int main(int argc, char **argv) {
       app.add_option("--source, source", source, "Source file")->required();
   s->check(spacesValidation);
 
-  //--::[ parse arguments ]::
+  //--::[ parse command ]::
 
   CLI11_PARSE(app, argc, argv);
 
@@ -132,23 +124,18 @@ int main(int argc, char **argv) {
 
   if (u->count() > 0 && p->count() > 0) {
     cout << flagDupMsg << endl;
-    return 1;
+    return EXIT_FAILURE;
+  }
+
+  if (u->count() > 1 || p->count() > 1) {
+    cout << flagDupMsg << endl;
+    return EXIT_FAILURE;
   }
 
   if (underscore) {
-    if (u->count() > 1) {
-      cout << flagDupMsg << endl;
-      return EXIT_FAILURE;
-    } else {
-      changeName(original, '1');
-    }
+    changeName(original, '1');
   } else if (period) {
-    if (p->count() > 1) {
-      cout << flagDupMsg << endl;
-      return EXIT_FAILURE;
-    } else {
-      changeName(original, '2');
-    }
+    changeName(original, '2');
   } else {
     changeName(original, '0');
   }
