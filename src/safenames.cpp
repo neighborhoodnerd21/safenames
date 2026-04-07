@@ -8,7 +8,7 @@
 ============================================================================
 */
 
-//--::[ HEADERS ]::
+/* --[ HEADERS ]-- */
 
 #include "CLI11.hpp"
 #include <algorithm>
@@ -23,14 +23,14 @@
 
 using namespace std;
 
-//--::[ GLOBALS ]::
+/* --[ GLOBALS ]-- */
 
 bool underscore{false}, period{false};
 string source, original, newname;
 char alternate;
 const unsigned char dash = '-', dot = '.', uscore = '_';
 
-//--::[ define messages ]::
+/* --[ MESSAGES ]-- */
 
 const string description = R"(
  $ safenames
@@ -49,7 +49,7 @@ const string flagDupMsg = R"(
  filename left unchanged.
 )";
 
-//--::[ whitespace validation ]::
+/* --[ VALIDATOR ]-- */
 
 struct WhiteSpaceValidator : public CLI::Validator {
   WhiteSpaceValidator() {
@@ -65,7 +65,7 @@ struct WhiteSpaceValidator : public CLI::Validator {
 
 const static WhiteSpaceValidator hasWhiteSpace;
 
-//--::[ change filename ]::
+/* --[ RENAME ]-- */
 
 int changeName(string filename, int altValue) {
 
@@ -99,7 +99,7 @@ int changeName(string filename, int altValue) {
   return EXIT_SUCCESS;
 }
 
-//--:::[ MAIN ]:::
+/* --[ MAIN ]-- */
 
 int main(int argc, char **argv) {
 
@@ -107,23 +107,18 @@ int main(int argc, char **argv) {
 
   app.get_formatter()->enable_option_type_names(false);
 
-  //--::[ set flags ]::
-
   auto u =
       app.add_flag("--underscore, -u", underscore, "Use dashes as delimiter");
   auto p = app.add_flag("--period, -p", period, "Use periods as delimiter");
 
   auto s =
       app.add_option("--source, source", source, "Source file")->required();
-  s->check(hasWhiteSpace);
 
-  //--::[ parse command ]::
+  s->check(hasWhiteSpace);
 
   CLI11_PARSE(app, argc, argv);
 
   original = source;
-
-  //--::[ enforce restrictions ]::
 
   if ((u->count() > 0 && p->count() > 0) ||
       (u->count() > 1 || p->count() > 1)) {
