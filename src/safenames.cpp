@@ -106,6 +106,7 @@ int main(int argc, char **argv) {
   CLI::App app{description};
 
   app.get_formatter()->enable_option_type_names(false);
+  app.get_formatter()->enable_description_formatting(false);
 
   auto u =
       app.add_flag("--underscore, -u", underscore, "Use dashes as delimiter");
